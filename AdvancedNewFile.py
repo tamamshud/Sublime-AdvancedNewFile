@@ -24,6 +24,7 @@ SETTINGS = [
 ]
 VIEW_NAME = "AdvancedNewFileCreation"
 WIN_ROOT_REGEX = r"[a-zA-Z]:(/|\\)"
+WIN_ENV_REGEX = r"%(\w*?)%(.*)"
 NIX_ROOT_REGEX = r"^/"
 HOME_REGEX = r"^~"
 
@@ -123,6 +124,10 @@ class AdvancedNewFileCommand(sublime_plugin.WindowCommand):
         try:
             # Parse windows root
             if self.PLATFORM == "windows":
+                env_match = re.match(WIN_ENV_REGEX, path)
+                if env_match:
+                    path = os.environ[env_match.group(1)] + env_match.group(2)
+                
                 if re.match(WIN_ROOT_REGEX, path):
                     root = path[0:3]
                     path = path[3:]
